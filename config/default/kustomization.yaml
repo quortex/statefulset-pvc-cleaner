@@ -13,7 +13,8 @@ namePrefix: statefulset-pvc-cleaner-
 #  someName: someValue
 
 bases:
-- ../crd
+# No CRD yet in this project
+# - ../crd
 - ../rbac
 - ../manager
 # [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in
