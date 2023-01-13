@@ -1,0 +1,6 @@
+domain: statefulset-pvc-cleaner.quortex.io
+layout:
+- go.kubebuilder.io/v3
+projectName: statefulset-pvc-cleaner
+repo: github.com/quortex/statefulset-pvc-cleaner
+version: "3"
