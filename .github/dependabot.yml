@@ -1,0 +1,28 @@
+version: 2
+updates:
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    reviewers:
+      - "vincentmrg"
+    rebase-strategy: "disabled"
+
+  # Maintain dependencies for go modules
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    reviewers:
+      - "vincentmrg"
+    rebase-strategy: "disabled"
+
+  # Enable version updates for Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    reviewers:
+      - "vincentmrg"
+    rebase-strategy: "disabled"
