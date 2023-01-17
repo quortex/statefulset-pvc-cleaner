@@ -58,7 +58,7 @@ helm install statefulset-pvc-cleaner statefulset-pvc-cleaner/statefulset-pvc-cle
 | manager.logs.timeEncoding | string | `"epoch"` | Logs time encoding (one of `epoch`, `millis`, `nano`, `iso8601`, `rfc3339` or `rfc3339nano`). |
 | kubeRBACProxy.enabled | bool | `true` | Specifies whether kube-rbac-proxy should be created. |
 | kubeRBACProxy.image.repository | string | `"gcr.io/kubebuilder/kube-rbac-proxy"` | kube-rbac-proxy image repository. |
-| kubeRBACProxy.image.tag | string | `"v0.8.0"` | kube-rbac-proxy image tag. |
+| kubeRBACProxy.image.tag | string | `"v0.13.1"` | kube-rbac-proxy image tag. |
 | kubeRBACProxy.image.pullPolicy | string | `"IfNotPresent"` | kube-rbac-proxy image pull policy. |
 | kubeRBACProxy.resources | object | `{}` | kube-rbac-proxy container required resources. |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created. |
