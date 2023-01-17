@@ -1,0 +1,20 @@
+{{ template "chart.header" . }}
+{{ template "chart.deprecationWarning" . }}
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
+
+{{ template "chart.description" . }}
+
+{{ template "chart.homepageLine" . }}
+
+{{ template "chart.requirementsSection" . }}
+
+## Overview
+This project is a Kubernetes controller to handle garbage collection of `PersistentVolumeClaims` created by `StatefulSets`.
+
+This controller is simpler and is not intended to replace the [Kubernetes StatefulSet PVC Auto-Deletion feature](https://kubernetes.io/blog/2021/12/16/kubernetes-1-23-statefulset-pvc-auto-deletion/) but rather to provide a `PersistentVolumeClaim` garbage collection mechanism on clusters that do not yet have this feature.
+
+
+{{ template "chart.valuesSection" . }}
+
+{{ template "chart.maintainersSection" . }}
