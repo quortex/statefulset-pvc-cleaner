@@ -10,7 +10,7 @@ This controller is simpler and is not intended to replace the [Kubernetes Statef
 
 ### Helm
 
-Helm chart coming soon!
+Follow `statefulset-pvc-cleaner` documentation for Helm deployment [here](./charts/statefulset-pvc-cleaner).
 
 ## Usage
 

@@ -11,6 +11,26 @@ This project is a Kubernetes controller to handle garbage collection of `Persist
 
 This controller is simpler and is not intended to replace the [Kubernetes StatefulSet PVC Auto-Deletion feature](https://kubernetes.io/blog/2021/12/16/kubernetes-1-23-statefulset-pvc-auto-deletion/) but rather to provide a `PersistentVolumeClaim` garbage collection mechanism on clusters that do not yet have this feature.
 
+## Installation
+
+1. Add `statefulset-pvc-cleaner` helm repository.
+
+```sh
+helm repo add statefulset-pvc-cleaner https://quortex.github.io/statefulset-pvc-cleaner
+```
+
+2. Create a namespace for `statefulset-pvc-cleaner`.
+
+```sh
+kubectl create ns statefulset-pvc-cleaner-system
+```
+
+3. Deploy the appropriate release.
+
+```sh
+helm install statefulset-pvc-cleaner statefulset-pvc-cleaner/statefulset-pvc-cleaner -n statefulset-pvc-cleaner-system
+```
+
 ## Values
 
 | Key | Type | Default | Description |
