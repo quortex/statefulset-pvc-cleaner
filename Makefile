@@ -17,7 +17,7 @@ SHELL = /usr/bin/env bash -o pipefail
 .SHELLFLAGS = -ec
 
 .PHONY: all
-all: build
+all: manifests build charts
 
 ##@ General
 
@@ -61,6 +61,11 @@ lint: golangci-lint ## Run the linter used in CI against code.
 .PHONY: test
 test: manifests generate fmt vet envtest ## Run tests.
 	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) -p path)" go test ./... -coverprofile cover.out
+
+.PHONY: charts
+charts: yq helm-docs ## Generate helm chart rbac from kustomize files and doc from helm values.
+	$(YQ) '.metadata.name |= "{{ include \"statefulset-pvc-cleaner.fullname\" . }}-" + .' config/rbac/role.yaml > charts/statefulset-pvc-cleaner/templates/manager_role.yaml
+	$(HELM_DOCS) -s file
 
 ##@ Build
 
@@ -135,11 +140,15 @@ KUSTOMIZE ?= $(LOCALBIN)/kustomize
 CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
 ENVTEST ?= $(LOCALBIN)/setup-envtest
 GOLANG_CI_LINT?= $(LOCALBIN)/golangci-lint
+HELM_DOCS?= $(LOCALBIN)/helm-docs
+YQ?= $(LOCALBIN)/yq
 
 ## Tool Versions
 KUSTOMIZE_VERSION ?= v3.8.7
 CONTROLLER_TOOLS_VERSION ?= v0.10.0
 GOLANG_CI_LINT_VERSION ?= v1.50.1
+HELM_DOCS_VERSION ?= v1.11.0
+YQ_VERSION ?= v4.30.8
 
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize
@@ -166,3 +175,13 @@ $(ENVTEST): $(LOCALBIN)
 golangci-lint: $(GOLANG_CI_LINT) ## Download golangci-lint locally if necessary.
 $(GOLANG_CI_LINT): $(LOCALBIN)
 	test -s $(LOCALBIN)/golangci-lint || GOBIN=$(LOCALBIN) go install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANG_CI_LINT_VERSION)
+
+.PHONY: helm-docs
+helm-docs: $(HELM_DOCS) ## Download helm-docs locally if necessary.
+$(HELM_DOCS): $(LOCALBIN)
+	test -s $(LOCALBIN)/helm-docs || GOBIN=$(LOCALBIN) go install github.com/norwoodj/helm-docs/cmd/helm-docs@$(HELM_DOCS_VERSION)
+
+.PHONY: yq
+yq: $(YQ) ## Download yq locally if necessary.
+$(YQ): $(LOCALBIN)
+	test -s $(LOCALBIN)/yq || GOBIN=$(LOCALBIN) go install github.com/mikefarah/yq/v4@$(YQ_VERSION)

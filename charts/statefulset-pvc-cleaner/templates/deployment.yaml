@@ -1,0 +1,100 @@
+{{- $fullName := include "statefulset-pvc-cleaner.fullname" . -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "statefulset-pvc-cleaner.labels" . | nindent 4 }}
+  {{- with .Values.deploymentAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "statefulset-pvc-cleaner.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "statefulset-pvc-cleaner.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "statefulset-pvc-cleaner.serviceAccountName" . }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriod }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        {{- with .Values.manager }}
+        - name: {{ $.Chart.Name }}
+          securityContext:
+            {{- toYaml .securityContext | nindent 12 }}
+          image: "{{ .image.repository }}:{{ .image.tag | default $.Chart.AppVersion }}"
+          args:
+            - --health-probe-bind-address=0.0.0.0:8081
+            - --metrics-bind-address={{ ternary "127.0.0.1:8080" "0.0.0.0:8080" $.Values.kubeRBACProxy.enabled }}
+            {{- with .logs }}
+            - --zap-devel={{ .development }}
+            {{- with .encoder }}
+            - --zap-encoder={{ . }}
+            {{- end }}
+            {{- with .logLevel }}
+            - --zap-log-level={{ . }}
+            {{- end }}
+            {{- with .stacktraceLevel }}
+            - --zap-stacktrace-level={{ . }}
+            {{- end }}
+            - --zap-time-encoding={{ .timeEncoding }}
+            {{- end }}
+            - --leader-elect
+          imagePullPolicy: {{ .image.pullPolicy }}
+          {{- if not $.Values.kubeRBACProxy.enabled }}
+          ports:
+            - containerPort: 8080
+              name: http-metrics
+          {{- end }}
+          livenessProbe:
+            {{- toYaml .livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+        {{- end }}
+        {{- with .Values.kubeRBACProxy }}
+        {{- if .enabled }}
+        - name: kube-rbac-proxy
+          image: "{{ .image.repository }}:{{ .image.tag }}"
+          args:
+            - --secure-listen-address=0.0.0.0:8443
+            - --upstream=http://127.0.0.1:8080/
+            - --logtostderr=true
+            - --v=10
+          imagePullPolicy: {{ .image.pullPolicy }}
+          ports:
+            - containerPort: 8443
+              name: https-metrics
+          resources:
+            {{- toYaml .resources | nindent 12 }}
+        {{- end }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

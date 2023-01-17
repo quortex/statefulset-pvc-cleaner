@@ -1,0 +1,137 @@
+# Default values for statefulset-pvc-cleaner.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Helm's name computing override.
+nameOverride: ""
+
+# -- Helm's fullname computing override.
+fullnameOverride: ""
+
+# -- Number of desired pods.
+replicaCount: 1
+
+manager:
+  image:
+    # -- statefulset-pvc-cleaner manager image repository.
+    repository: ghcr.io/quortex/statefulset-pvc-cleaner
+    # -- statefulset-pvc-cleaner manager image tag (default is the chart appVersion).
+    tag: ""
+    # -- statefulset-pvc-cleaner manager image pull policy.
+    pullPolicy: IfNotPresent
+
+  # -- statefulset-pvc-cleaner manager container required resources.
+  resources: {}
+
+  # -- statefulset-pvc-cleaner manager container securityContext.
+  securityContext:
+    {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  livenessProbe:
+    httpGet:
+      # -- Path of the manager liveness probe.
+      path: /healthz
+      # -- Name or number of the manager liveness probe port.
+      port: 8081
+    # -- Number of seconds before the manager liveness probe is initiated.
+    initialDelaySeconds: 15
+    # -- How often (in seconds) to perform the manager liveness probe.
+    periodSeconds: 20
+
+  readinessProbe:
+    httpGet:
+      # -- Path of the manager readiness probe.
+      path: /readyz
+      # -- Name or number of the manager readiness probe port.
+      port: 8081
+    # -- Number of seconds before the manager readiness probe is initiated.
+    initialDelaySeconds: 5
+    # -- How often (in seconds) to perform the manager readiness probe.
+    periodSeconds: 10
+
+  logs:
+    # -- Whether to enable development logs.
+    development: false
+    # -- Logs encoding (one of `json` or `console`).
+    # Defaults to `console` when `development` is true and `json` otherwise.
+    encoder: ""
+    # -- Level to configure the verbosity of logging. Can be one of `debug`,
+    # `info`, `error`, or any integer value > 0 which corresponds to custom
+    # debug levels of increasing verbosity).
+    # Defaults to `debug` when `development` is true and `info` otherwise.
+    logLevel: ""
+    # -- Level at and above which stacktraces are captured (one of `info`,
+    # `error` or `panic`).
+    # Defaults to `warn` when `development` is true and `error` otherwise.
+    stacktraceLevel: ""
+    # -- Logs time encoding (one of `epoch`, `millis`, `nano`, `iso8601`,
+    # `rfc3339` or `rfc3339nano`).
+    timeEncoding: epoch
+
+kubeRBACProxy:
+  # -- Specifies whether kube-rbac-proxy should be created.
+  enabled: true
+  image:
+    # -- kube-rbac-proxy image repository.
+    repository: gcr.io/kubebuilder/kube-rbac-proxy
+    # -- kube-rbac-proxy image tag.
+    tag: v0.13.1
+    # -- kube-rbac-proxy image pull policy.
+    pullPolicy: IfNotPresent
+  # -- kube-rbac-proxy container required resources.
+  resources: {}
+
+serviceAccount:
+  # -- Specifies whether a service account should be created.
+  create: true
+  # -- Annotations to add to the service account.
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template.
+  name: ""
+
+# -- A list of secrets used to pull containers images.
+imagePullSecrets: []
+
+# -- Annotations to be added to deployment.
+deploymentAnnotations: {}
+
+# -- Annotations to be added to pods.
+podAnnotations: {}
+
+# -- How long to wait for pods to stop gracefully.
+terminationGracePeriod: 30
+
+# -- Pods securityContext.
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+# -- Node labels for statefulset-pvc-cleaner pod assignment.
+nodeSelector: {}
+
+# -- Node tolerations for statefulset-pvc-cleaner scheduling to nodes with taints.
+tolerations: []
+
+# -- Affinity for statefulset-pvc-cleaner pod assignment.
+affinity: {}
+
+serviceMonitor:
+  # -- Create a prometheus operator ServiceMonitor.
+  enabled: false
+  # -- Labels added to the ServiceMonitor.
+  additionalLabels: {}
+  # -- Annotations added to the ServiceMonitor.
+  annotations: {}
+  # -- Override prometheus operator scrapping interval.
+  interval: ""
+  # -- Override prometheus operator scrapping timeout.
+  scrapeTimeout: ""
+  # -- Relabellings to apply to samples before scraping.
+  relabelings: []
