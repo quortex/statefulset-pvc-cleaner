@@ -1,0 +1,21 @@
+apiVersion: v1
+entries:
+  statefulset-pvc-cleaner:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2023-01-17T16:35:42.597055353Z"
+    description: A Kubernetes controller to handle garbage collection of PersistentVolumeClaims
+      created by StatefulSets
+    digest: 79a8f4fcd48eb8716619fdf1e7e0aaa94e80088c1ea4d0f4d15eaf961fff9a3b
+    home: https://github.com/quortex/statefulset-pvc-cleaner
+    maintainers:
+    - name: vincentmrg
+      url: https://github.com/vincentmrg
+    name: statefulset-pvc-cleaner
+    sources:
+    - https://github.com/quortex/statefulset-pvc-cleaner/helm
+    type: application
+    urls:
+    - https://github.com/quortex/statefulset-pvc-cleaner/releases/download/statefulset-pvc-cleaner-chart-0.1.0/statefulset-pvc-cleaner-0.1.0.tgz
+    version: 0.1.0
+generated: "2023-01-17T16:35:42.597061453Z"
